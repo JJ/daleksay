@@ -1,4 +1,12 @@
-# rank-amateur-cowsay
+# critterhey
+
+This is an updatization (yep, that's a thing) of cowsay, using
+modern Perl idioms. Install it using
+
+	cpanm --instaldeps .
+	
+
+# Old README starts here.
 
 This is cowsay, imported directly from my ancient CVS repository,
 plus a few documentation tweaks to make it a bit more friendly to

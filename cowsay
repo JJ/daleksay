@@ -1,7 +1,7 @@
-#%BANGPERL%
+#!/usr/bin/env perl
 
 ##
-## Cowsay 3.03
+## Critterhey 0.0.1, based on Cowsay 3.03
 ##
 ## This file is part of cowsay.  (c) 1999-2000 Tony Monroe.
 ##
