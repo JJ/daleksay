@@ -1,5 +1,8 @@
 #!/usr/bin/env perl
 
+use strict;
+use warnings;
+use v5.14;
 ##
 ## Critterhey 0.0.1, based on Cowsay 3.03
 ##
@@ -12,30 +15,18 @@ use File::Basename;
 use Getopt::Std;
 use Cwd;
 
-$version = "3.03";
-$progname = basename($0);
-$eyes = "oo";
-$tongue = "  ";
-$cowpath = $ENV{'COWPATH'} || './cows';
-@message = ();
-$thoughts = "";
+my $version = "3.03";
+my $progname = basename($0);
+my $eyes = "oo";
+my $tongue = "  ";
+my $cowpath = $ENV{'COWPATH'} || './cows';
+my @message = ();
+my $thoughts = "";
+my $pathsep = ":";
 
-## Yeah, this is rude, I know.  But hopefully it gets around a nasty
-## little version dependency.
+$pathsep = ';' if ($^O !~ "Win"); 	## Many perls, eek!
 
-$Text::Wrap::initial_tab = 8;
-$Text::Wrap::subsequent_tab = 8;
-$Text::Wrap::tabstop = 8;
-
-## One of these days, we'll get it ported to Windows.  Yeah, right.
-
-if (($^O eq "MSWin32") or ($^O eq "Windows_NT")) {	## Many perls, eek!
-    $pathsep = ';';
-} else {
-    $pathsep = ':';
-}
-
-%opts = (
+my %opts = (
     'e'		=>	'oo',
     'f'		=>	'default.cow',
     'n'		=>	0,
@@ -48,25 +39,27 @@ getopts('bde:f:ghlLnNpstT:wW:y', \%opts);
 &display_usage if $opts{'h'};
 &list_cowfiles if $opts{'l'};
 
-$borg = $opts{'b'};
-$dead = $opts{'d'};
-$greedy = $opts{'g'};
-$paranoid = $opts{'p'};
-$stoned = $opts{'s'};
-$tired = $opts{'t'};
-$wired = $opts{'w'};
-$young = $opts{'y'};
-$eyes = substr($opts{'e'}, 0, 2);
+my $borg = $opts{'b'};
+my $dead = $opts{'d'};
+my $greedy = $opts{'g'};
+my $paranoid = $opts{'p'};
+my $stoned = $opts{'s'};
+my $tired = $opts{'t'};
+my $wired = $opts{'w'};
+my $young = $opts{'y'};
+$eyes = substr($opts{'e'}, 0, 2) if  substr($opts{'e'}, 0, 2);
 $tongue = substr($opts{'T'}, 0, 2);
-$the_cow = "";
 
 &slurp_input;
 $Text::Wrap::columns = $opts{'W'};
 @message = ($opts{'n'} ? expand(@message) : 
 	    split("\n", fill("", "", @message)));
-&construct_balloon;
-&construct_face;
-&get_cow;
+my @balloon_lines = construct_balloon();
+my $new_eyes = construct_face();
+if ( $new_eyes ) {
+  $eyes = $new_eyes;
+}
+my $the_cow = get_cow();
 print @balloon_lines;
 print $the_cow;
 
@@ -94,7 +87,7 @@ sub slurp_input {
     unless ($ARGV[0]) {
 	chomp(@message = <STDIN>);
     } else {
-	&display_usage if $opts{'n'};
+	display_usage() if $opts{'n'};
 	@message = join(' ', @ARGV);
     }
 }
@@ -110,77 +103,79 @@ sub maxlength {
 }
 
 sub construct_balloon {
-    my $max = &maxlength(@message);
-    my $max2 = $max + 2;	## border space fudge.
-    my $format = "%s %-${max}s %s\n";
-    my @border;	## up-left, up-right, down-left, down-right, left, right
-    if ($0 =~ /think/i) {
-	$thoughts = 'o';
-	@border = qw[ ( ) ( ) ( ) ];
-    } elsif (@message < 2) {
-	$thoughts = '\\';
-	@border = qw[ < > ];
-    } else {
-	$thoughts = '\\';
-	if ($V and $V gt v5.6.0) {		# Thanks, perldelta.
-	    @border = qw[ / \\ \\ / | | ];
-	} else {
-	    @border = qw[ / \ \ / | | ];	
-	}
-    }
-    push(@balloon_lines, 
-	" " . ("_" x $max2) . " \n" ,
-	sprintf($format, $border[0], $message[0], $border[1]),
-	(@message < 2 ? "" : 
-	    map { sprintf($format, $border[4], $_, $border[5]) } 
-		@message[1 .. $#message - 1]),
-	(@message < 2 ? "" : 
-	    sprintf($format, $border[2], $message[$#message], $border[3])),
-        " " . ("-" x $max2) . " \n"
-    );
+  my @baloon_lines;
+  my $max = &maxlength(@message);
+  my $max2 = $max + 2;	## border space fudge.
+  my $format = "%s %-${max}s %s\n";
+  my @border;	## up-left, up-right, down-left, down-right, left, right
+  if ($0 =~ /think/i) {
+    $thoughts = 'o';
+    @border = qw[ ( ) ( ) ( ) ];
+  } elsif (@message < 2) {
+    $thoughts = '\\';
+    @border = qw[ < > ];
+  } else {
+    $thoughts = '\\';
+    @border = qw[ / \ \ / | | ];	
+  }
+  push(@balloon_lines, 
+       " " . ("_" x $max2) . " \n" ,
+       sprintf($format, $border[0], $message[0], $border[1]),
+       (@message < 2 ? "" : 
+	map { sprintf($format, $border[4], $_, $border[5]) } 
+	@message[1 .. $#message - 1]),
+       (@message < 2 ? "" : 
+	sprintf($format, $border[2], $message[$#message], $border[3])),
+       " " . ("-" x $max2) . " \n"
+      );
+  return @balloon_lines;
 }
 
 sub construct_face {
-    if ($borg) { $eyes = "=="; }
-    if ($dead) { $eyes = "xx"; $tongue = "U "; }
-    if ($greedy) { $eyes = "\$\$"; }
-    if ($paranoid) { $eyes = "@@"; }
-    if ($stoned) { $eyes = "**"; $tongue = "U "; }
-    if ($tired) { $eyes = "--"; } 
-    if ($wired) { $eyes = "OO"; } 
-    if ($young) { $eyes = ".."; }
+  my $eyes;
+  if ($borg) { $eyes = "=="; }
+  if ($dead) { $eyes = "xx"; $tongue = "U "; }
+  if ($greedy) { $eyes = "\$\$"; }
+  if ($paranoid) { $eyes = "@@"; }
+  if ($stoned) { $eyes = "**"; $tongue = "U "; }
+  if ($tired) { $eyes = "--"; } 
+  if ($wired) { $eyes = "OO"; } 
+  if ($young) { $eyes = ".."; }
+  return $eyes;
 }
 
 sub get_cow {
-##
-## Get a cow from the specified cowfile; otherwise use the default cow
-## which was defined above in $the_cow.
-##
-    my $f = $opts{'f'};
-    my $full = "";
-    if ($opts{'f'} =~ m,/,) {
-	$full = $opts{'f'};
-    } else {
-	for my $d (split(/:/, $cowpath)) {
-	    if (-f "$d/$f") {
-		$full = "$d/$f";
-		last;
-	    } elsif (-f "$d/$f.cow") {
-		$full = "$d/$f.cow";
-		last;
-	    }
-	}
-	if ($full eq "") {
-	    die "$progname: Could not find $f cowfile!\n";
-	}
+  ##
+  ## Get a cow from the specified cowfile; otherwise use the default cow
+  ## which was defined above in $the_cow.
+  ##
+
+  my $f = $opts{'f'};
+  my $full = "";
+  if ($opts{'f'} =~ m,/,) {
+    $full = $opts{'f'};
+  } else {
+    for my $d (split(/:/, $cowpath)) {
+      if (-f "$d/$f") {
+	$full = "$d/$f";
+	last;
+      } elsif (-f "$d/$f.cow") {
+	$full = "$d/$f.cow";
+	last;
+      }
     }
-    do $full;
-    die "$progname: $@\n" if $@;
+    if ($full eq "") {
+      die "$progname: Could not find $f cowfile!\n";
+    }
+  }
+  my $the_cow = do $full;
+  die "$progname: $@\n" if $@;
+  return $the_cow;
 }
 
 sub display_usage {
 	die <<EOF;
-cow{say,think} version $version, (c) 1999 Tony Monroe
+cow{say,think} version $version, (c) 2017 Tony Monroe, JJ Merelo
 Usage: $progname [-bdgpstwy] [-h] [-e eyes] [-f cowfile] 
           [-l] [-n] [-T tongue] [-W wrapcolumn] [message]
 EOF
