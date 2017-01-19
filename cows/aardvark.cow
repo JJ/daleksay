@@ -2,8 +2,8 @@
 ## From http://www.chris.com/ascii/index.php?art=animals/aardvarks
 ##
 $the_cow =<<EOC;
-$thoughts
  $thoughts
+  $thoughts
    $thoughts            ,
          (`.  : \               __..----..__
           `.`.| |:          _,-':::''' '  `:`-._

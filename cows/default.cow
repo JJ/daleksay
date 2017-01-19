@@ -2,15 +2,15 @@
 # From http://www.ascii-code.com/ascii-art/television/doctor-who.php
 # Signature kept
 $the_cow = <<"EOC";
-
-
-                    $thoughts
-                   /
-              ___
+         $thoughts
+          $thoughts
+           $thoughts
+            \\
+             \\___
       D>=G==='   '.
             |======|
             |======|
-        )--/]II($eyes)II]
+        )--/]IIIIII]
            |_______|
            C O O O D
           C O  O  O D

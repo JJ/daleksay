@@ -14,13 +14,13 @@ use Text::Wrap qw(wrap fill $columns);
 use File::Basename;
 use Getopt::Std;
 use Cwd;
+use File::Slurp::Tiny qw(read_file);
 
 my $version = "0.0.1";
 my $progname = basename($0);
 my $tongue = "  ";
 my $cowpath = $ENV{'COWPATH'} || './cows';
 my @message = ();
-my $thoughts = "";
 my $pathsep = ":";
 
 $pathsep = ';' if ($^O !~ "Win"); 	## Many perls, eek!
@@ -53,13 +53,13 @@ $tongue = substr($opts{'T'}, 0, 2);
 $Text::Wrap::columns = $opts{'W'};
 @message = ($opts{'n'} ? expand(@message) : 
 	    split("\n", fill("", "", @message)));
-my @balloon_lines = construct_balloon();
+my ($thoughts,$balloon_lines) = construct_balloon();
 my $new_eyes = construct_face();
 if ( $new_eyes ) {
   $eyes = $new_eyes;
 }
-my $the_cow = get_cow();
-print @balloon_lines;
+my $the_cow = get_cow( $thoughts, $eyes, $tongue);
+print @$balloon_lines;
 print $the_cow;
 
 
@@ -104,8 +104,10 @@ sub maxlength {
     return $m;
 }
 
+# Returns @balloon_lines and $thoughts
 sub construct_balloon {
-  my @baloon_lines;
+  my @balloon_lines;
+  my $thoughts;
   my $max = &maxlength(@message);
   my $max2 = $max + 2;	## border space fudge.
   my $format = "%s %-${max}s %s\n";
@@ -130,7 +132,7 @@ sub construct_balloon {
 	sprintf($format, $border[2], $message[$#message], $border[3])),
        " " . ("-" x $max2) . " \n"
       );
-  return @balloon_lines;
+  return $thoughts, \@balloon_lines;
 }
 
 sub construct_face {
@@ -151,7 +153,9 @@ sub get_cow {
   ## Get a cow from the specified cowfile; otherwise use the default cow
   ## which was defined above in $the_cow.
   ##
-
+  my $thoughts = shift;
+  my $eyes = shift;
+  my $tongue = shift;
   my $f = $opts{'f'};
   my $full = "";
   if ($opts{'f'} =~ m,/,) {
@@ -170,9 +174,10 @@ sub get_cow {
       die "$progname: Could not find $f cowfile!\n";
     }
   }
-  my $the_cow = do $full;
+  my $the_cow_content = read_file $full;
+  eval $the_cow_content;
   die "$progname: $@\n" if $@;
-  return $the_cow;
+  return $the_cow; 
 }
 
 sub display_usage {
