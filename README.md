@@ -1,12 +1,20 @@
-# critterhey
+# DalekSay
 
-This is an updatization (yep, that's a thing) of cowsay, using
-modern Perl idioms. Install it using
+This is an updatization (yep, that's a thing) of cowsay, originally at https://github.com/tnalpgge/rank-amateur-cowsay, using
+modern Perl idioms. For instance, you can install depencencies using
 
 	cpanm --instaldeps .
 	
+And then run it from this directory or
+
+	export COWPATH = <this dir/cows>
+	
+and run it from anywhere. This can probably improved, but this is
+simple and straighforward. 
 
 # Old README starts here.
+
+>Some of the files mentioned here might not be present in this new repo.
 
 This is cowsay, imported directly from my ancient CVS repository,
 plus a few documentation tweaks to make it a bit more friendly to
