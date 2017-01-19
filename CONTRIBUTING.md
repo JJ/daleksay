@@ -1,8 +1,10 @@
-# Contributing to cowsay
+# Contributing to critterhey
 
-The repository at https://github.com/tnalpgge/rank-amateur-cowsay.git is
-available for forking to any interested parties.  Issues and pull
-requests on that repository will be ignored.
+The repository at https://github.com/JJ/rank-amateur-cowsay.git is
+available for forking to any interested parties. You can make
+suggestions or contributions using issues. New cows will need to have
+a creative commons or license compatible with the Artistic license of
+the package. 
 
 This file may be replaced or edited at the discretion of those
 entitled to commit to forks.
