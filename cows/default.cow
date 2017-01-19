@@ -2,11 +2,11 @@
 # From http://www.ascii-code.com/ascii-art/television/doctor-who.php
 # Signature kept
 $the_cow = <<"EOC";
-
-
-                    $thoughts
-                   /
-              ___
+         $thoughts
+          $thoughts
+           $thoughts
+            \\
+             \\___
       D>=G==='   '.
             |======|
             |======|
