@@ -1,6 +1,6 @@
-# Contributing to critterhey
+# Contributing to daleksay
 
-The repository at https://github.com/JJ/rank-amateur-cowsay.git is
+The repository at https://github.com/JJ/daleksay.git is
 available for forking to any interested parties. You can make
 suggestions or contributions using issues. New cows will need to have
 a creative commons or license compatible with the Artistic license of
