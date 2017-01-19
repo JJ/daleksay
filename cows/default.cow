@@ -1,7 +1,20 @@
+# ASCII art by Shanaka Dias
+# From http://www.ascii-code.com/ascii-art/television/doctor-who.php
+# Signature kept
 $the_cow = <<"EOC";
-        $thoughts   ^__^
-         $thoughts  ($eyes)\\_______
-            (__)\\       )\\/\\
-             $tongue ||----w |
-                ||     ||
+
+
+                    $thoughts
+                   /
+              ___
+      D>=G==='   '.
+            |======|
+            |======|
+        )--/]II($eyes)II]
+           |_______|
+           C O O O D
+          C O  O  O D
+         C  O  O  O  D
+         C__O__O__O__D
+snd     [_____________]
 EOC

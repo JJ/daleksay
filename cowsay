@@ -15,7 +15,7 @@ use File::Basename;
 use Getopt::Std;
 use Cwd;
 
-my $version = "3.03";
+my $version = "0.0.1";
 my $progname = basename($0);
 my $tongue = "  ";
 my $cowpath = $ENV{'COWPATH'} || './cows';
